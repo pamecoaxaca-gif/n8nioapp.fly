@@ -1,0 +1,45 @@
+app = "n8nioapp"
+primary_region = "gdl"  # Región de Guadalajara
+
+[build]
+  image = "n8nio/n8n"  # Imagen oficial de n8n
+
+# Configuración del servicio HTTP
+[http_service]
+  internal_port = 5678  # Puerto interno de n8n
+  force_https = true    # Redirige HTTP a HTTPS
+  auto_start_machines = true  # Inicia máquinas automáticamente al recibir tráfico
+  auto_stop_machines = true   # Detiene máquinas después de inactividad
+  min_machines_running = 0    # Máquinas mínimas en ejecución (0 para ahorrar recursos)
+
+# Configuración de la máquina virtual
+[[vm]]
+  memory = "256mb"      # Memoria asignada (puedes aumentar a 1gb si es necesario)
+  cpu_kind = "shared"   # Tipo de CPU (compartida para plan gratuito)
+  cpus = 1              # Número de CPUs
+
+# Montaje del volumen para persistencia de datos
+[mounts]
+  source = "n8n_data"          # Nombre del volumen en Fly.io
+  destination = "/home/node/.n8n"  # Ruta donde n8n guarda los workflows y configuraciones
+
+# Configuración opcional para health checks (evita apagados prematuros)
+[[services]]
+  http_checks = []
+  internal_port = 5678
+  protocol = "tcp"
+  script_checks = []
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+  [[services.tcp_checks]]
+    grace_period = "1s"
+    interval = "15s"
+    restart_limit = 0
+    timeout = "2s"
