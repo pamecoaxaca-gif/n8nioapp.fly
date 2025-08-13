@@ -1,0 +1,48 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "path": "mi-webhook",
+        "httpMethod": "POST",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "console.log('Datos recibidos:', $input.all());\nreturn $input.all();"
+      },
+      "name": "Function",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [650, 300]
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [[{
+        "node": "Webhook",
+        "type": "main",
+        "index": 0
+      }]]
+    },
+    "Webhook": {
+      "main": [[{
+        "node": "Function",
+        "type": "main",
+        "index": 0
+      }]]
+    }
+  }
+}
